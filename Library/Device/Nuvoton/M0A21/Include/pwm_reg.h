@@ -25,8 +25,7 @@
     Memory Mapped Structure for PWM Controller
 @{ */
 
-typedef struct
-{
+typedef struct {
     /**
      * @var PWM_T::CTL0
      * Offset: 0x00  PWM Control Register 0
@@ -1632,7 +1631,7 @@ typedef struct
 #define PWM_BRKCTL0_1_CPO0EBEN_Msk       (0x1ul << PWM_BRKCTL0_1_CPO0EBEN_Pos)             /*!< PWM_T::BRKCTL0_1: CPO0LBEN Mask        */
 
 #define PWM_BRKCTL0_1_CPO1EBEN_Pos       (1)                                               /*!< PWM_T::BRKCTL0_1: CPO1LBEN Position    */
-#define PWM_BRKCTL0_1_CPO1EBEN_Msk       (0x1ul << PWM_BRKCTL0_1_CPO1LEBEN_Pos)             /*!< PWM_T::BRKCTL0_1: CPO1LBEN Mask        */
+#define PWM_BRKCTL0_1_CPO1EBEN_Msk       (0x1ul << PWM_BRKCTL0_1_CPO1EBEN_Pos)             /*!< PWM_T::BRKCTL0_1: CPO1LBEN Mask        */
 
 #define PWM_FAILBRK_CORBRKEN_Pos         (3)                                               /*!< PWM_T::FAILBRK: CORBRKEN Position      */
 #define PWM_FAILBRK_CORBRKEN_Msk         (0x1ul << PWM_FAILBRK_CORBRKEN_Pos)               /*!< PWM_T::FAILBRK: CORBRKEN Mask          */

@@ -64,7 +64,7 @@ void SYS_Init(void)
     SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD0MFP_Msk | SYS_GPD_MFP0_PD1MFP_Msk)) |
                     (SYS_GPD_MFP0_PD0MFP_PWM0_CH4 | SYS_GPD_MFP0_PD1MFP_PWM0_CH5);
 
-    SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD2MFP_Msk | SYS_GPD_MFP0_PD3MFP_Msk)) |
+	SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD2MFP_Msk | SYS_GPD_MFP0_PD3MFP_Msk)) |
                     (SYS_GPD_MFP0_PD2MFP_PWM0_CH0 | SYS_GPD_MFP0_PD3MFP_PWM0_CH1);
 
     /* Set PC multi-function pins for PWM0 Channel 2/3 */

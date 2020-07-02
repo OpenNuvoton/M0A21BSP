@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V1.00
- * $Revision: 2 $
- * $Date: 20/05/28 1:39p $
+ * $Revision: 4 $
+ * $Date: 20/07/02 5:45p $
  * @brief
  *           Change duty cycle and period of output waveform by PWM Double Buffer function.
  *
@@ -71,13 +71,6 @@ void SYS_Init(void)
     /* Enable UART peripheral clock */
     CLK_EnableModuleClock(UART0_MODULE);
 
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency configuration                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency can be set equal or double to HCLK by choosing case 1 or case 2 */
-    /* case 1.PWM clock frequency is set equal to HCLK: select PWM module clock source as PCLK */
-//    CLK_SetModuleClock(PWM0_MODULE, CLK_CLKSEL2_PWM0SEL_PCLK0, 0);
-
     /* Enable PWM0 module clock */
     CLK_EnableModuleClock(PWM0_MODULE);
 
@@ -140,7 +133,6 @@ int32_t main(void)
         |      200     |_____200______|   40  |____60__|     PWM waveform
 
     */
-
     /*
       Configure PWM0 channel 0 init period and duty(up counter type).
       Period is PCLK / (prescaler * (CNR + 1))
@@ -150,9 +142,6 @@ int32_t main(void)
     */
     /* PWM0 channel 0 frequency is 120,000 Hz, duty 50%, */
     PWM_ConfigOutputChannel(PWM0, 0, 120000, 50);
-
-    /* PWM0 channel 0 is edge-aligned and down counter type */
-    PWM_SET_ALIGNED_TYPE(PWM0, BIT0, PWM_EDGE_ALIGNED);
 
     /* Enable output of PWM0 channel 0 */
     PWM_EnableOutput(PWM0, PWM_CH_0_MASK);
@@ -167,5 +156,5 @@ int32_t main(void)
     /* Start */
     PWM_Start(PWM0, PWM_CH_0_MASK);
 
-    while(1);
+	while(1);
 }

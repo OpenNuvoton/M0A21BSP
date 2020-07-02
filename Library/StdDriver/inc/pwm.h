@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     pwm.h
  * @version  V3.00
- * $Revision: 6 $
- * $Date: 20/07/01 9:59a $
+ * $Revision: 8 $
+ * $Date: 20/07/02 5:41p $
  * @brief    M0A21 series PWM driver header file
  *
  * @note
@@ -361,7 +361,7 @@ extern "C"
  * @note PWM counter will stop if period length set to 0.
  * \hideinitializer
  */
-#define PWM_SET_CNR(pwm, u32ChannelNum, u32CNR)  ((pwm)->PERIOD[(u32ChannelNum)] = (u32CNR))
+#define PWM_SET_CNR(pwm, u32ChannelNum, u32CNR)  ((pwm)->PERIOD[((u32ChannelNum>>1)<<1)] = (u32CNR))
 
 /**
  * @brief This macro get the period of the selected channel
@@ -371,50 +371,7 @@ extern "C"
  * @details This macro is used to get the period of specified channel.
  * \hideinitializer
  */
-#define PWM_GET_CNR(pwm, u32ChannelNum)  ((pwm)->PERIOD[(u32ChannelNum)])
-
-/**
- * @brief This macro set the PWM aligned type
- * @param[in] pwm The pointer of the specified PWM module
- * @param[in] u32ChannelMask Combination of enabled channels. Each bit corresponds to a channel
- *                           Bit 0 represents channel 0, bit 1 represents channel 1...
- * @param[in] u32AlignedType PWM aligned type, valid values are:
- *              - \ref PWM_EDGE_ALIGNED
- *              - \ref PWM_CENTER_ALIGNED
- * @return None
- * @details This macro is used to set the PWM aligned type of specified channel(s).
- * \hideinitializer
- */
-#define PWM_SET_ALIGNED_TYPE(pwm, u32ChannelMask, u32AlignedType) \
-   do{ \
-        int i; \
-        for(i = 0; i < 6; i++) { \
-            if((u32ChannelMask) & (1 << i)) \
-                (pwm)->CTL1 = (((pwm)->CTL1 & ~(3UL << (i << 1))) | ((u32AlignedType) << (i << 1))); \
-        } \
-    }while(0)
-
-/**
- * @brief Set load window of window loading mode for specified channel(s)
- * @param[in] pwm The pointer of the specified PWM module
- * @param[in] u32ChannelMask Combination of enabled channels. Each bit corresponds to a channel
- *                           Bit 0 represents channel 0, bit 1 represents channel 1...
- * @return None
- * @details This macro is used to set load window of window loading mode for specified channel(s).
- * \hideinitializer
- */
-#define PWM_SET_LOAD_WINDOW(pwm, u32ChannelMask) ((pwm)->LOAD |= (u32ChannelMask))
-
-/**
- * @brief Trigger synchronous event from specified channel(s)
- * @param[in] pwm The pointer of the specified PWM module
- * @param[in] u32ChannelNum PWM channel number. Valid values are 0, 2, 4
- *                           Bit 0 represents channel 0, bit 1 represents channel 2 and bit 2 represents channel 4
- * @return None
- * @details This macro is used to trigger synchronous event from specified channel(s).
- * \hideinitializer
- */
-#define PWM_TRIGGER_SYNC(pwm, u32ChannelNum) ((pwm)->SWSYNC |= (1 << ((u32ChannelNum) >> 1)))
+#define PWM_GET_CNR(pwm, u32ChannelNum)  ((pwm)->PERIOD[(((u32ChannelNum>>1)<<1))])
 
 /**
  * @brief Clear counter of specified channel(s)
@@ -425,7 +382,14 @@ extern "C"
  * @details This macro is used to clear counter of specified channel(s).
  * \hideinitializer
  */
-#define PWM_CLR_COUNTER(pwm, u32ChannelMask) ((pwm)->CNTCLR |= (u32ChannelMask))
+ #define PWM_CLR_COUNTER(pwm, u32ChannelMask) \
+    do{ \
+        uint32_t i; \
+        for(i = 0UL; i < 6UL; i++) { \
+            if((u32ChannelMask) & (1UL << i)) \
+                ((pwm)->CNTCLR |= (1UL << ((i >> 1UL) << 1UL))); \
+        } \
+    }while(0)
 
 /**
  * @brief Set output level at zero, compare up, period(center) and compare down of specified channel(s)

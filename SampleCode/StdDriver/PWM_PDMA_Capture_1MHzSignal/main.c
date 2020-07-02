@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V1.00
- * $Revision: 2 $
- * $Date: 20/05/28 1:40p $
+ * $Revision: 4 $
+ * $Date: 20/07/02 5:47p $
  * @brief    Capture the PWM0 Channel 0 waveform by PWM0 Channel 2, and use PDMA to transfer captured data.
              Frequency of PWM Channel 0 is 1 MHz to test maximum input frequency
                          for PWM Capture function.
@@ -197,9 +197,6 @@ int32_t main(void)
     /* PWM0 channel 0 frequency comparator to 24 */
     PWM_SET_CMR(PWM0, 0, 24);
 
-    /* PWM0 channel 0 is edge-aligned and down counter type */
-    PWM_SET_ALIGNED_TYPE(PWM0, BIT0, PWM_EDGE_ALIGNED);
-
     /* ZeroLevel: Low, CmpUpLevel: nothing, PeriodLevel: nothing, CmpDownLevel: High */
     PWM_SET_OUTPUT_LEVEL(PWM0, PWM_CH_0_MASK, PWM_OUTPUT_LOW, PWM_OUTPUT_HIGH, PWM_OUTPUT_NOTHING, PWM_OUTPUT_HIGH);
 
@@ -261,8 +258,7 @@ int32_t main(void)
         /* Configure PDMA transfer count and enable PDMA function                               */
         /*--------------------------------------------------------------------------------------*/
         /* Select PDMA request source as PWM RX(PWM0 channel 2 should be PWM0 pair 2) */
-//        PDMA_SetTransferMode(PDMA, 0, PDMA_PWM0_P2_RX, FALSE, 0);
-        PDMA_SetTransferMode(PDMA, 0, PDMA_PWM0_P1_RX, FALSE, 0);
+        PDMA_SetTransferMode(PDMA, 0, PDMA_PWM0_P2_RX, FALSE, 0);
 
         /* Transfer width is half word(16 bit) and transfer count is 4 */
         PDMA_SetTransferCnt(PDMA, 0, PDMA_WIDTH_16, Transfer_Count);
@@ -302,6 +298,7 @@ int32_t main(void)
 
     /* Stop PWM counter */
     PWM_Stop(PWM0, PWM_CH_0_MASK);
+
     /* Disable output of PWM0 channel 0 */
     PWM_DisableOutput(PWM0, PWM_CH_0_MASK);
 

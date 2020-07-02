@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V1.00
- * $Revision: 3 $
- * $Date: 20/05/28 1:39p $
+ * $Revision: 5 $
+ * $Date: 20/07/02 5:44p $
  * @brief
  *           Demonstrate how to set PWM0 channel 0 outputs 240 kHz waveform and
                          swtich duty in each 0.5%.
@@ -78,13 +78,6 @@ void SYS_Init(void)
     /* Enable UART peripheral clock */
     CLK_EnableModuleClock(UART0_MODULE);
 
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency configuration                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency can be set equal or double to HCLK by choosing case 1 or case 2 */
-    /* case 1.PWM clock frequency is set equal to HCLK: select PWM module clock source as PCLK */
-//    CLK_SetModuleClock(PWM0_MODULE, CLK_CLKSEL2_PWM0SEL_PCLK0, 0);
-
     /* Enable PWM0 module clock */
     CLK_EnableModuleClock(PWM0_MODULE);
 
@@ -113,9 +106,9 @@ int32_t main(void)
 {
     uint8_t  u8Duty;
 
-    /* Unlock protected registers */
+	/* Unlock protected registers */
 //    SYS_UnlockReg();
-
+	
     /* Init System, IP clock and multi-function I/O */
     SYS_Init();
 
@@ -127,7 +120,7 @@ int32_t main(void)
 
     /* Configure UART0 and set UART0 baud rate */
     UART_Open(UART0, 115200);
-
+	
     printf("+-----------------------------------------------------------------------------------+\n");
     printf("|                          PWM Driver Sample Code                                   |\n");
     printf("|                                                                                   |\n");
@@ -154,11 +147,8 @@ int32_t main(void)
     /* PWM0 channel 0 frequency comparator to 100 */
     PWM_SET_CMR(PWM0, 0, 100);
 
-    /* PWM0 channel 0 is edge-aligned and down counter type */
-    PWM_SET_ALIGNED_TYPE(PWM0, BIT0, PWM_EDGE_ALIGNED);
-
-    /* ZeroLevel: Low, CmpUpLevel: nothing, PeriodLevel: nothing, CmpDownLevel: High */
-    PWM_SET_OUTPUT_LEVEL(PWM0, PWM_CH_0_MASK, PWM_OUTPUT_LOW, PWM_OUTPUT_NOTHING, PWM_OUTPUT_NOTHING, PWM_OUTPUT_HIGH);
+    /* ZeroLevel: Hihg, CmpUpLevel: Low, PeriodLevel: nothing, CmpDownLevel: nothing */
+    PWM_SET_OUTPUT_LEVEL(PWM0, PWM_CH_0_MASK, PWM_OUTPUT_HIGH, PWM_OUTPUT_LOW, PWM_OUTPUT_NOTHING, PWM_OUTPUT_NOTHING);
 
     /* Enable output of PWM0 channel 0 */
     PWM_EnableOutput(PWM0, PWM_CH_0_MASK);
@@ -178,23 +168,7 @@ int32_t main(void)
         else
         {
             printf("Output Duty is %d.%d %%.\n", u8Duty/2, (u8Duty%2)*5);
-
-            if(u8Duty == 200)
-            {
-                /* ZeroLevel: nothing, CmpUpLevel: nothing, PeriodLevel: High, CmpDownLevel: nothing */
-                PWM_SET_OUTPUT_LEVEL(PWM0, PWM_CH_0_MASK, PWM_OUTPUT_NOTHING, PWM_OUTPUT_NOTHING, PWM_OUTPUT_HIGH, PWM_OUTPUT_NOTHING);
-
-                /* PWM0 channel 0 duty to u8Duty */
-                PWM_SET_CMR(PWM0, 0, u8Duty);
-            }
-            else
-            {
-                /* ZeroLevel: nothing, CmpUpLevel: nothing, PeriodLevel: High, CmpDownLevel: Low */
-                PWM_SET_OUTPUT_LEVEL(PWM0, PWM_CH_0_MASK, PWM_OUTPUT_LOW, PWM_OUTPUT_NOTHING, PWM_OUTPUT_NOTHING, PWM_OUTPUT_HIGH);
-
-                /* PWM0 channel 0 duty to u8Duty */
-                PWM_SET_CMR(PWM0, 0, u8Duty);
-            }
+		    PWM_SET_CMR(PWM0, 0, u8Duty);	
         }
     }
 }

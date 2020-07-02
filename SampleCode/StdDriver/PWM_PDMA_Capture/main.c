@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V1.00
- * $Revision: 3 $
- * $Date: 20/05/28 1:40p $
+ * $Revision: 4 $
+ * $Date: 20/07/02 5:46p $
  * @brief    Capture the PWM0 Channel 0 waveform by PWM0 Channel 2, and use PDMA to transfer captured data.
  * @note
  * SPDX-License-Identifier: Apache-2.0
@@ -160,7 +160,7 @@ int32_t main(void)
 
     /* Configure UART0 and set UART0 baud rate */
     UART_Open(UART0, 115200);
-
+	
     printf("+------------------------------------------------------------------------+\n");
     printf("|                          PWM Driver Sample Code                        |\n");
     printf("|                                                                        |\n");
@@ -207,7 +207,7 @@ int32_t main(void)
         /* Configure PDMA peripheral mode form PWM to memory                                    */
         /*--------------------------------------------------------------------------------------*/
         /* Open Channel 0 */
-        PDMA_Open(PDMA, BIT0);
+		PDMA_Open(PDMA, BIT0);
 
         /* Transfer width is half word(16 bit) and transfer count is 4 */
         PDMA_SetTransferCnt(PDMA, 0, PDMA_WIDTH_16, 4);
@@ -216,8 +216,7 @@ int32_t main(void)
         PDMA_SetTransferAddr(PDMA, 0, (uint32_t)&PWM0->PDMACAP2_3, PDMA_SAR_FIX, (uint32_t)&g_au16Count[0], PDMA_DAR_INC);
 
         /* Select PDMA request source as PWM RX(PWM0 channel 2 should be PWM0 pair 2) */
-//        PDMA_SetTransferMode(PDMA, 0, PDMA_PWM0_P2_RX, FALSE, 0);
-        PDMA_SetTransferMode(PDMA, 0, PDMA_PWM0_P1_RX, FALSE, 0);
+        PDMA_SetTransferMode(PDMA, 0, PDMA_PWM0_P2_RX, FALSE, 0);
 
         /* Set PDMA as single request type for PWM */
         PDMA_SetBurstType(PDMA, 0, PDMA_REQ_SINGLE, PDMA_BURST_4);

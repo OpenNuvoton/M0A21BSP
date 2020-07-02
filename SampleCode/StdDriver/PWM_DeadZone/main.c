@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V1.00
- * $Revision: 4 $
- * $Date: 20/05/28 1:39p $
+ * $Revision: 5 $
+ * $Date: 20/07/02 5:45p $
  * @brief    Demonstrate how to use PWM Dead Zone function.
  * @note
  * SPDX-License-Identifier: Apache-2.0
@@ -34,7 +34,7 @@ void PWM0_IRQHandler(void)
     /* Channel 0 frequency is 6,000 Hz, every 1 second enter this IRQ handler 6,000 times. */
     if(++cnt == 6000)
     {
-        if(out)
+        if(out)   
             PWM_EnableOutput(PWM0, PWM_CH_0_MASK|PWM_CH_1_MASK|PWM_CH_4_MASK|PWM_CH_5_MASK);
         else
             PWM_DisableOutput(PWM0, PWM_CH_0_MASK|PWM_CH_1_MASK|PWM_CH_4_MASK|PWM_CH_5_MASK);
@@ -66,13 +66,6 @@ void SYS_Init(void)
     /* Enable UART peripheral clock */
     CLK_EnableModuleClock(UART0_MODULE);
 
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency configuration                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency can be set equal or double to HCLK by choosing case 1 or case 2 */
-    /* case 1.PWM clock frequency is set equal to HCLK: select PWM module clock source as PCLK */
-//    CLK_SetModuleClock(PWM0_MODULE, CLK_CLKSEL2_PWM0SEL_PCLK0, 0);
-
     /* Enable PWM0 module clock */
     CLK_EnableModuleClock(PWM0_MODULE);
 
@@ -93,7 +86,7 @@ void SYS_Init(void)
     SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD0MFP_Msk | SYS_GPD_MFP0_PD1MFP_Msk)) |
                     (SYS_GPD_MFP0_PD0MFP_PWM0_CH4 | SYS_GPD_MFP0_PD1MFP_PWM0_CH5);
 
-    SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD2MFP_Msk | SYS_GPD_MFP0_PD3MFP_Msk)) |
+	SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD2MFP_Msk | SYS_GPD_MFP0_PD3MFP_Msk)) |
                     (SYS_GPD_MFP0_PD2MFP_PWM0_CH0 | SYS_GPD_MFP0_PD3MFP_PWM0_CH1);
 }
 
@@ -145,7 +138,7 @@ int32_t main(void)
     SYS_LockReg();
 
     /* Enable output of PWM0 channel 0/1, 4/5 */
-    PWM_EnableOutput(PWM0, PWM_CH_0_MASK|PWM_CH_1_MASK|PWM_CH_4_MASK|PWM_CH_5_MASK);
+	PWM_EnableOutput(PWM0, PWM_CH_0_MASK|PWM_CH_1_MASK|PWM_CH_4_MASK|PWM_CH_5_MASK);
 
     /* Enable PWM0 channel 0 period interrupt, use channel 0 to measure time. */
     PWM_EnablePeriodInt(PWM0, 0, 0);

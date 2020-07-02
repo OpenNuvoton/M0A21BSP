@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V1.00
- * $Revision: 2 $
- * $Date: 20/05/28 1:39p $
+ * $Revision: 3 $
+ * $Date: 20/07/02 5:45p $
  * @brief    Capture the PWM0 Channel 0 waveform by PWM0 Channel 2.
  * @note
  * SPDX-License-Identifier: Apache-2.0
@@ -112,13 +112,6 @@ void SYS_Init(void)
 
     /* Enable UART peripheral clock */
     CLK_EnableModuleClock(UART0_MODULE);
-
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency configuration                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* PWM clock frequency can be set equal or double to HCLK by choosing case 1 or case 2 */
-    /* case 1.PWM clock frequency is set equal to HCLK: select PWM module clock source as PCLK */
-//    CLK_SetModuleClock(PWM0_MODULE, CLK_CLKSEL2_PWM0SEL_PCLK0, 0);
 
     /* Enable PWM0 module clock */
     CLK_EnableModuleClock(PWM0_MODULE);
