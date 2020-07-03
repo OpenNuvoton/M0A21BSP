@@ -76,6 +76,7 @@ void UART_ClearIntFlag(UART_T *uart , uint32_t u32InterruptFlag)
     {
         uart->INTSTS = UART_INTSTS_LINIF_Msk;
         uart->LINSTS = UART_LINSTS_BITEF_Msk    | UART_LINSTS_BRKDETF_Msk  |
+                       UART_LINSTS_RTOUTF_Msk | UART_INTSTS_LINIF_Msk |        
                        UART_LINSTS_SLVSYNCF_Msk | UART_LINSTS_SLVIDPEF_Msk |
                        UART_LINSTS_SLVHEF_Msk   | UART_LINSTS_SLVHDETF_Msk ;
     }
