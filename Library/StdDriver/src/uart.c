@@ -66,6 +66,7 @@ void UART_ClearIntFlag(UART_T *uart , uint32_t u32InterruptFlag)
 
     if (u32InterruptFlag & UART_INTSTS_WKINT_Msk)   /* Clear Wake-up Interrupt */
     {
+        uart->LINWKCTL = UART_LINWKCTL_LINWKF_Msk;
         uart->WKSTS = UART_WKSTS_CTSWKF_Msk  | UART_WKSTS_DATWKF_Msk  |
                       UART_WKSTS_RFRTWKF_Msk | UART_WKSTS_RS485WKF_Msk |
                       UART_WKSTS_TOUTWKF_Msk;

@@ -27,22 +27,18 @@ void UART_FunctionTest(void);
 void LIN_Send_Wakeup_FunctionTest(void);
 void LIN_PowerDown_Wakeup_FunctionTest(void);
 
-uint32_t IRQAry[20], IRQidx=0;
-
 
 void UART1_IRQHandler(void)
 {
     volatile uint32_t u32IntSts = UART1->INTSTS;
 
-    IRQAry[IRQidx++] = u32IntSts;
-
-    if(UART_GET_INT_FLAG(UART1, UART_INTSTS_WKINT_Msk))
+    if(UART_GET_INT_FLAG(UART1, UART_INTSTS_WKIF_Msk))
     {
         g_i32RxCounter=0;
         UART_ClearIntFlag(UART1, UART_INTSTS_WKINT_Msk);
     }
 
-    if(u32IntSts & UART_INTSTS_LININT_Msk)
+    if(u32IntSts & UART_INTSTS_LINIF_Msk)
     {
         if(UART1->LINSTS & UART_LINSTS_SLVHDETF_Msk)
         {
@@ -247,7 +243,7 @@ void LIN_Send_Wakeup_FunctionTest(void)
     /* Switch back to LIN Function */
     UART1->FUNCSEL = UART_FUNCSEL_LIN;
 
-    // Set LIN Wake-up Compartor with 250us @HXT clock source
+    // Set LIN Wake-up Signal length with 250us @HXT clock source
     WakeupPulse = ((250*1000) / (1000000000/__HXT));
     UART1->LINWKCTL = (UART1->LINWKCTL & ~UART_LINWKCTL_LINWKC_Msk) | WakeupPulse;      // uint engine clock.
 

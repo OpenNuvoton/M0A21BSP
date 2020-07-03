@@ -31,7 +31,7 @@ void UART1_IRQHandler(void)
 {
     volatile uint32_t u32IntSts = UART1->INTSTS;
 
-    if(u32IntSts & UART_INTSTS_LININT_Msk)
+    if(u32IntSts & UART_INTSTS_LINIF_Msk)
     {
         if(UART1->LINSTS & UART_LINSTS_SLVHDETF_Msk)
         {
@@ -48,7 +48,7 @@ void UART1_IRQHandler(void)
         }
     }
 
-    if(u32IntSts & UART_INTSTS_RDAINT_Msk)
+    if(u32IntSts & UART_INTSTS_RDAIF_Msk)
     {
         g_u8ReceiveData[g_i32RxCounter] = UART1->DAT;
         g_i32RxCounter++;
@@ -67,10 +67,6 @@ void SYS_Init(void)
 
     /* Waiting clock ready */
     CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
-
-    /* Set core clock as PLL_CLOCK from PLL */
-    CLK_SetCoreClock(192000000);
-    CLK->PCLKDIV = (CLK_PCLKDIV_APB0DIV_DIV2 | CLK_PCLKDIV_APB1DIV_DIV2); // PCLK divider set 2
 
     /* Enable IP clock */
     CLK->APBCLK0 |= CLK_APBCLK0_UART0CKEN_Msk; // UART0 Clock Enable
