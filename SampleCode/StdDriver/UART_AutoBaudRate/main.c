@@ -146,7 +146,7 @@ void AutoBaudRate_Test(void)
     printf("+-----------------------------------------------------------+\n");
     printf("|  ______                                            _____  |\n");
     printf("| |      |                                          |     | |\n");
-    printf("| |Master|--UART1_TXD(PA.2) <====> UART1_RXD(PA.3)--|Slave| |\n");
+    printf("| |Master|--UART1_TXD(PB.5) <====> UART1_RXD(PB.7)--|Slave| |\n");
     printf("| |      |                                          |     | |\n");
     printf("| |______|                                          |_____| |\n");
     printf("|                                                           |\n");
