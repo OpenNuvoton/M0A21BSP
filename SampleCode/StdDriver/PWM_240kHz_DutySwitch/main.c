@@ -5,12 +5,10 @@
  * $Date: 20/07/02 5:44p $
  * @brief
  *           Demonstrate how to set PWM0 channel 0 outputs 240 kHz waveform and
-                         swtich duty in each 0.5%.
+ *           swtich duty in each 0.5%.
  *
- * @note
  * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
- *
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>

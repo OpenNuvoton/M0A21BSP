@@ -4,10 +4,9 @@
  * $Revision: 5 $
  * $Date: 20/07/02 5:45p $
  * @brief    Demonstrate how to use PWM Dead Zone function.
- * @note
- * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"

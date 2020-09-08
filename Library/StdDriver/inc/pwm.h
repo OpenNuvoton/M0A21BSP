@@ -5,10 +5,8 @@
  * $Date: 20/07/02 5:41p $
  * @brief    M0A21 series PWM driver header file
  *
- * @note
  * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
- *
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #ifndef __PWM_H__
 #define __PWM_H__

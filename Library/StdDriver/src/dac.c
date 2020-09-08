@@ -5,10 +5,8 @@
  * $Date: 20/06/30 5:57p $
  * @brief    M0A21 series DAC driver source file
  *
- * @note
  * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
- *
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include "NuMicro.h"
 

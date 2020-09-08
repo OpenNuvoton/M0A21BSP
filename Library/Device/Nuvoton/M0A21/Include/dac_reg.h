@@ -3,10 +3,8 @@
  * @version  V1.00
  * @brief    CLK register definition header file
  *
- * @note
  * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
- *
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #ifndef __DAC_REG_H__
 #define __DAC_REG_H__

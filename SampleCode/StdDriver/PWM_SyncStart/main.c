@@ -4,10 +4,9 @@
  * $Revision: 2 $
  * $Date: 20/05/28 1:40p $
  * @brief    Demonstrate how to use PWM counter synchronous start function.
- * @note
- * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"

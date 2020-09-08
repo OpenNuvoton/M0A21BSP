@@ -4,10 +4,9 @@
  * $Revision: 4 $
  * $Date: 20/06/30 8:04p $
  * @brief    Demonstrate how to trigger DAC conversion by software method.
- * @note
- * SPDX-License-Identifier: Apache-2.0
- * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include "stdio.h"
 #include "NuMicro.h"
