@@ -301,6 +301,24 @@ extern "C"
 #define GPIO_SET_DEBOUNCE_TIME(u32ClkSrc, u32ClkSel)    (GPIO->DBCTL = (GPIO_DBCTL_ICLKONA_Msk | GPIO_DBCTL_ICLKONB_Msk | GPIO_DBCTL_ICLKONC_Msk | GPIO_DBCTL_ICLKOND_Msk | (u32ClkSrc) | (u32ClkSel)))
 
 /**
+ * @brief       Set GPIO Interrupt Clock on bit
+ * @param[in]   port        GPIO port. It could be PA, PB, PC, PD.
+ * @return      None
+ * @details     Set the I/O pins edge detection circuit always active after reset for specified port.
+ * \hideinitializer
+ */
+#define GPIO_SET_DEBOUNCE_ICLKON(port)  (GPIO->DBCTL |= ((0x1UL << ((((uint32_t)(port) - (uint32_t)GPIO_BASE) / 0x40) + 16))))
+
+/**
+ * @brief       Clear GPIO Interrupt Clock on bit
+ * @param[in]   port        GPIO port. It could be PA, PB, PC, PD.
+ * @return      None
+ * @details     Set edge detection circuit active only if I/O pin edge interrupt enabled for specified port
+ * \hideinitializer
+ */
+#define GPIO_CLR_DEBOUNCE_ICLKON(port)  (GPIO->DBCTL &= ~((0x1UL << ((((uint32_t)(port) - (uint32_t)GPIO_BASE) / 0x40) + 16))))
+
+/**
  * @brief       Get GPIO Port IN Data
  * @param[in]   port        GPIO port. It could be PA, PB, PC, PD.
  * @return      The specified port data
