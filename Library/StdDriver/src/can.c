@@ -513,15 +513,16 @@ int32_t CAN_SetRxMsgObjAndMsk(CAN_T *tCAN, uint8_t u8MsgObj, uint8_t u8idType, u
         {
             tCAN->IF[u32MsgIfNum].ARB1 = 0ul;
             tCAN->IF[u32MsgIfNum].ARB2 = CAN_IF_ARB2_MSGVAL_Msk | (u32id & 0x7FFul) << 2;
+            tCAN->IF[u32MsgIfNum].MASK1 = 0ul;
+            tCAN->IF[u32MsgIfNum].MASK2 = CAN_IF_MASK2_MXTD_Msk | CAN_IF_MASK2_MDIR_Msk | (u32idmask & 0x7FFul) << 2;
         }
         else
         {
             tCAN->IF[u32MsgIfNum].ARB1 = u32id & 0xFFFFul;
             tCAN->IF[u32MsgIfNum].ARB2 = CAN_IF_ARB2_MSGVAL_Msk | CAN_IF_ARB2_XTD_Msk | (u32id & 0x1FFF0000ul) >> 16;
+            tCAN->IF[u32MsgIfNum].MASK1 = u32idmask & 0xFFFFul;
+            tCAN->IF[u32MsgIfNum].MASK2 = CAN_IF_MASK2_MXTD_Msk | CAN_IF_MASK2_MDIR_Msk | (u32idmask & 0x1FFF0000ul) >> 16;
         }
-
-        tCAN->IF[u32MsgIfNum].MASK1 = (u32idmask & 0xFFFFul);
-        tCAN->IF[u32MsgIfNum].MASK2 = (u32idmask >> 16) & 0xFFFFul;
 
         /* tCAN->IF[u32MsgIfNum].MCON |= CAN_IF_MCON_UMASK_Msk | CAN_IF_MCON_RXIE_Msk; */
         tCAN->IF[u32MsgIfNum].MCON = CAN_IF_MCON_UMASK_Msk | CAN_IF_MCON_RXIE_Msk;
