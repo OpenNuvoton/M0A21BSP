@@ -39,6 +39,9 @@ void SYS_Init(void)
     /* Set UI2C0 multi-function pins */
     SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~(SYS_GPB_MFP1_PB5MFP_Msk | SYS_GPB_MFP1_PB7MFP_Msk)) |
                     (SYS_GPB_MFP1_PB5MFP_USCI0_DAT0 | SYS_GPB_MFP1_PB7MFP_USCI0_CLK);
+
+    /* I2C pin enable schmitt trigger */
+    PB->SMTEN |= (GPIO_SMTEN_SMTEN5_Msk | GPIO_SMTEN_SMTEN7_Msk);
 }
 
 int main(void)

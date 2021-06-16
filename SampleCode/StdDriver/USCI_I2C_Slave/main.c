@@ -209,6 +209,9 @@ void SYS_Init(void)
     SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~(SYS_GPB_MFP1_PB5MFP_Msk | SYS_GPB_MFP1_PB7MFP_Msk)) |
                     (SYS_GPB_MFP1_PB5MFP_USCI0_DAT0 | SYS_GPB_MFP1_PB7MFP_USCI0_CLK);
 
+    /* I2C pin enable schmitt trigger */
+    PB->SMTEN |= (GPIO_SMTEN_SMTEN5_Msk | GPIO_SMTEN_SMTEN7_Msk);
+
     /* Lock protected registers */
     SYS_LockReg();
 }
