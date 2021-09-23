@@ -35,17 +35,17 @@
   *                  - \ref ACMP_CTL_NEGSEL_N2
   *                  - \ref ACMP_CTL_NEGSEL_N3
   *                  - \ref ACMP_CTL_NEGSEL_CRV
-  * @param[in]  u32HysteresisEn The hysteresis function option. Including:
-  *                  - \ref ACMP_CTL_HYSTERESIS_ENABLE
+  * @param[in]  u32HysSel The hysteresis function option. Including:
+  *                  - \ref ACMP_CTL_HYSTERESIS_30MV
   *                  - \ref ACMP_CTL_HYSTERESIS_DISABLE
   *
   * @return     None
   *
   * @details    Configure hysteresis function, select the source of negative input and enable analog comparator.
   */
-void ACMP_Open(ACMP_T *Acmp, uint32_t u32ChNum, uint32_t u32NegSrc, uint32_t u32HysteresisEn)
+void ACMP_Open(ACMP_T *Acmp, uint32_t u32ChNum, uint32_t u32NegSrc, uint32_t u32HysSel)
 {
-    Acmp->CTL[u32ChNum] = (Acmp->CTL[u32ChNum] & (~(ACMP_CTL_NEGSEL_Msk | ACMP_CTL_HYSEN_Msk))) | (u32NegSrc | u32HysteresisEn | ACMP_CTL_ACMPEN_Msk);
+    Acmp->CTL[u32ChNum] = (Acmp->CTL[u32ChNum] & (~(ACMP_CTL_NEGSEL_Msk | ACMP_CTL_HYSSEL_Msk))) | (u32NegSrc | u32HysSel | ACMP_CTL_ACMPEN_Msk | ACMP_CTL_HYSEN_Msk);
 }
 
 /**

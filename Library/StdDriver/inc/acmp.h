@@ -57,8 +57,8 @@ extern "C"
 #define ACMP_CTL_NEGSEL_N3           (4UL << ACMP_CTL_NEGSEL_Pos)  /*!< ACMP_CTL setting for selecting ACMPx_N3 pin as the source of ACMP V-. \hideinitializer */
 #define ACMP_CTL_NEGSEL_CRV          (5UL << ACMP_CTL_NEGSEL_Pos)  /*!< ACMP_CTL setting for selecting internal comparator reference voltage CRV as the source of ACMP V-. \hideinitializer */
 
-#define ACMP_CTL_HYSTERESIS_ENABLE   (1UL << ACMP_CTL_HYSEN_Pos)  /*!< ACMP_CTL setting for enabling the hysteresis function. \hideinitializer */
-#define ACMP_CTL_HYSTERESIS_DISABLE  (0UL << ACMP_CTL_HYSEN_Pos)  /*!< ACMP_CTL setting for disabling the hysteresis function. \hideinitializer */
+#define ACMP_CTL_HYSTERESIS_ENABLE   (3UL << ACMP_CTL_HYSSEL_Pos)  /*!< ACMP_CTL setting for enabling the hysteresis function. \hideinitializer */
+#define ACMP_CTL_HYSTERESIS_DISABLE  (0UL << ACMP_CTL_HYSSEL_Pos)  /*!< ACMP_CTL setting for disabling the hysteresis function. \hideinitializer */
 
 #define ACMP_CTL_HYSTERESIS_0MV      (0UL << ACMP_CTL_HYSSEL_Pos) /*!< ACMP_CTL setting for hysteresis mode selection 0mV. \hideinitializer */
 #define ACMP_CTL_HYSTERESIS_30MV     (3UL << ACMP_CTL_HYSSEL_Pos) /*!< ACMP_CTL setting for hysteresis mode selection 30mV. \hideinitializer */
