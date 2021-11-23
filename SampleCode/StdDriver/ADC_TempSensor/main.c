@@ -59,11 +59,6 @@ void SYS_Init(void)
     /* Enable temperature sensor */
     SYS->IVSCTL |= SYS_IVSCTL_VTEMPEN_Msk;
 
-    /* Set reference voltage to external pin (3.3V) */
-    SYS_SetVRef(SYS_VREFCTL_VREF_PIN);
-    /* Set ADC voltage reference to external Vref pin */
-    SYS->VREFCTL |= SYS_VREFCTL_ADCPRESEL_Msk;
-
     /* Lock protected registers */
     SYS_LockReg();
 }
@@ -111,11 +106,14 @@ void ADC_FunctionTest()
     printf("ADC Conversion result of temperature sensor: 0x%X (%d)\n", i32ConversionData, i32ConversionData);
 
     /* The equation of converting to real temperature is as below
-     * (25+(((float)i32ConversionData/4095*3300)-675)/(-1.83)), 3300 means ADCVREF=3.3V
-     * If ADCREF set to 1.6V, the equation should be updated as below
-     * (25+(((float)i32ConversionData/4095*1600)-675)/(-1.83)), 1600 means ADCVREF=1.6V
+     *      Vtemp = Tc * (temperature - Ta) + Vtemp_os
+     *      Vtemp = EADC_result / 4095 * ADC_Vref
+     *      so, temperature = Ta + (Vtemp - Vtemp_os) / Tc
+     *                      = Ta + ((EADC_result / 4095 * ADC_Vref) - Vtemp_os) / Tc
+     *      where Vtemp_os, Tc, and Ta can be got from the data sheet document.
+     *            ADC_Vref is the ADC Vref that according to the configuration of SYS and EADC.
      */
-    printf("Current Temperature = %2.1f\n\n", (25+(((float)i32ConversionData/4095*3300)-675)/(-1.83)));
+    printf("Current Temperature = %2.1f degrees Celsius if EADC Vref = 3300mV\n\n", (0+(((float)i32ConversionData/4095*3300)-653.9)/(-2.007)));
 }
 
 void ADC_IRQHandler(void)
