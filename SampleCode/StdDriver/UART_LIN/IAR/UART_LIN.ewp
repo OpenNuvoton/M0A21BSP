@@ -691,7 +691,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\generic_cortex.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\Nuvoton\M0A21.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -915,6 +915,9 @@
     <name>Library</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\Library\StdDriver\src\clk.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\Library\StdDriver\src\gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\Library\StdDriver\src\retarget.c</name>

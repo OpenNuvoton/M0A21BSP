@@ -84,14 +84,20 @@ void SYS_Init(void)
     SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~(SYS_GPB_MFP1_PB4MFP_Msk | SYS_GPB_MFP1_PB6MFP_Msk)) |        \
                     (SYS_GPB_MFP1_PB4MFP_UART0_TXD | SYS_GPB_MFP1_PB6MFP_UART0_RXD);
 
-    /* Set PB multi-function pins for UART1 TXD and RXD */
-    SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~(SYS_GPB_MFP1_PB5MFP_Msk | SYS_GPB_MFP1_PB7MFP_Msk)) |        \
-                    (SYS_GPB_MFP1_PB5MFP_UART1_TXD | SYS_GPB_MFP1_PB7MFP_UART1_RXD);
+    /* Set PC multi-function pins for UART1 TXD and RXD */
+    SYS->GPC_MFP1 = (SYS->GPC_MFP1 & ~(SYS_GPC_MFP1_PC6MFP_Msk | SYS_GPC_MFP1_PC7MFP_Msk)) |    \
+                    (SYS_GPC_MFP1_PC6MFP_UART1_RXD | SYS_GPC_MFP1_PC7MFP_UART1_TXD);
+    /* Enable UART1 RXD pull-up resistor */
+    GPIO_SetPullCtl(PC, BIT6, GPIO_PUSEL_PULL_UP);
 
     /* Set PD multi-function pins for UART1 CTS and RTS */
     SYS->GPD_MFP0 = (SYS->GPD_MFP0 & ~(SYS_GPD_MFP0_PD2MFP_Msk | SYS_GPD_MFP0_PD3MFP_Msk)) |    \
                     (SYS_GPD_MFP0_PD2MFP_UART1_nCTS | SYS_GPD_MFP0_PD3MFP_UART1_nRTS);
 
+    /* Enable the LIN transceiver */
+    PC0 = 1;
+    GPIO_SetMode(PC, BIT0, GPIO_MODE_OUTPUT);
+    CLK_SysTickDelay(10);
 }
 
 void UART0_Init()
