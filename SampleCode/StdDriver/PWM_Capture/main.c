@@ -35,12 +35,24 @@ void CalPeriodTime(PWM_T *PWM, uint32_t u32Ch)
     uint16_t u32Count[4];
     uint32_t u32i;
     uint16_t u16RisingTime, u16FallingTime, u16HighPeriod, u16LowPeriod, u16TotalPeriod;
+    uint32_t u32TimeOutCount;
 
     /* Clear Capture Falling Indicator (Time A) */
     PWM_ClearCaptureIntFlag(PWM, u32Ch, PWM_CAPTURE_INT_FALLING_LATCH);
 
+    /* setup timeout */
+    u32TimeOutCount = SystemCoreClock;
+
     /* Wait for Capture Falling Indicator  */
-    while((PWM0->CAPIF & PWM_CAPIF_CFLIF2_Msk) == 0);
+    while((PWM0->CAPIF & PWM_CAPIF_CFLIF2_Msk) == 0)
+    {
+        if(u32TimeOutCount == 0)
+        {
+            printf("\nSomething is wrong, please check if pin connection is correct. \n");
+            while(1);
+        }
+        u32TimeOutCount--;
+    }
 
     /* Clear Capture Falling Indicator (Time B)*/
     PWM_ClearCaptureIntFlag(PWM, u32Ch, PWM_CAPTURE_INT_FALLING_LATCH);
@@ -138,6 +150,7 @@ void SYS_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
+    uint32_t u32TimeOutCount;
 
     /* Unlock protected registers */
 //    SYS_UnlockReg();
@@ -222,8 +235,19 @@ int32_t main(void)
         /* Enable falling capture reload */
         PWM0->CAPCTL |= PWM_CAPCTL_FCRLDEN2_Msk;
 
+        /* setup timeout */
+        u32TimeOutCount = SystemCoreClock;
+
         /* Wait until PWM0 channel 2 Timer start to count */
-        while((PWM0->CNT[2]) == 0);
+        while((PWM0->CNT[2]) == 0)
+        {
+            if(u32TimeOutCount == 0)
+            {
+                printf("PWM encounters some errors, please check it. \n");
+                while(1);
+            }
+            u32TimeOutCount--;
+        }
 
         /* Capture the Input Waveform Data */
         CalPeriodTime(PWM0, 2);
@@ -234,8 +258,19 @@ int32_t main(void)
         /* Set PWM0 channel 0 loaded value as 0 */
         PWM_Stop(PWM0, PWM_CH_0_MASK);
 
+        /* setup timeout */
+        u32TimeOutCount = SystemCoreClock;
+
         /* Wait until PWM0 channel 0 Timer Stop */
-        while((PWM0->CNT[0] & PWM_CNT_CNT_Msk) != 0);
+        while((PWM0->CNT[0] & PWM_CNT_CNT_Msk) != 0)
+        {
+            if(u32TimeOutCount == 0)
+            {
+                printf("PWM encounters some errors, please check it. \n");
+                while(1);
+            }
+            u32TimeOutCount--;
+        }
 
         /* Disable Timer for PWM0 channel 0 */
         PWM_ForceStop(PWM0, PWM_CH_0_MASK);
@@ -251,8 +286,19 @@ int32_t main(void)
         /* Set loaded value as 0 for PWM0 channel 2 */
         PWM_Stop(PWM0, PWM_CH_2_MASK);
 
+        /* setup timeout */
+        u32TimeOutCount = SystemCoreClock;
+
         /* Wait until PWM0 channel 2 current counter reach to 0 */
-        while((PWM0->CNT[2] & PWM_CNT_CNT_Msk) != 0);
+        while((PWM0->CNT[2] & PWM_CNT_CNT_Msk) != 0)
+        {
+            if(u32TimeOutCount == 0)
+            {
+                printf("PWM encounters some errors, please check it. \n");
+                while(1);
+            }
+            u32TimeOutCount--;
+        }
 
         /* Disable Timer for PWM0 channel 2 */
         PWM_ForceStop(PWM0, PWM_CH_2_MASK);
