@@ -19,6 +19,8 @@
   @{
 */
 
+int32_t g_ADC_i32ErrCode = 0;   /*!< ADC global error code */
+
 /** @addtogroup ADC_EXPORTED_FUNCTIONS ADC Exported Functions
   @{
 */
