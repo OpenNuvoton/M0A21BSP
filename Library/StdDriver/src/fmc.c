@@ -28,6 +28,7 @@
   @{
 */
 
+int32_t  g_FMC_i32ErrCode;
 
 /**
   * @brief Disable FMC ISP function.
@@ -46,23 +47,35 @@ void FMC_Close(void)
   * @return ISP page erase success or not.
   * @retval    0  Success
   * @retval   -1  Erase failed
+  *
+  * @note     Global error code g_FMC_i32ErrCode
+  *           -1  Erase failed or erase time-out 
   */
 int32_t FMC_Erase(uint32_t u32PageAddr)
 {
-    int32_t  ret = 0;
-
+    uint32_t  tout;
+	
+    g_FMC_i32ErrCode = 0;
+	
     FMC->ISPCMD = FMC_ISPCMD_PAGE_ERASE;
     FMC->ISPADDR = u32PageAddr;
     FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;
 
-    while (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk) { }
+    tout = FMC_TIMEOUT_ERASE;
+    while ((--tout > 0) && (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk)) {}
+    if (tout == 0)
+    {
+        g_FMC_i32ErrCode = -1;
+        return -1;
+    }
 
     if (FMC->ISPCTL & FMC_ISPCTL_ISPFF_Msk)
     {
         FMC->ISPCTL |= FMC_ISPCTL_ISPFF_Msk;
-        ret = -1;
+        g_FMC_i32ErrCode = -1;
+        return -1;
     }
-    return ret;
+    return 0;
 }
 
 /**
@@ -99,14 +112,30 @@ void FMC_Open(void)
   * @param[in]  u32Addr Address of the flash location to be read.
   *             It must be a word aligned address.
   * @return The word data read from specified flash address.
+  *          Return 0xFFFFFFFF if read failed.
+  *
+  * @note     Global error code g_FMC_i32ErrCode
+  *           -1  Read time-out 
   */
 uint32_t FMC_Read(uint32_t u32Addr)
 {
+    uint32_t  tout;
+
+    g_FMC_i32ErrCode = 0;
+    
     FMC->ISPCMD = FMC_ISPCMD_READ;
     FMC->ISPADDR = u32Addr;
     FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;
-    while (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk) { }
 
+    tout = FMC_TIMEOUT_READ;
+    
+    while ((--tout > 0) && (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk)) {}
+    
+    if (tout == 0)
+    {
+        g_FMC_i32ErrCode = -1;
+        return 0xFFFFFFFF;
+    }
     return FMC->ISPDAT;
 }
 
@@ -147,15 +176,53 @@ void FMC_SetBootSource(int32_t i32BootSrc)
   * @param[in]  u32Addr Address of the flash location to be programmed.
   *             It must be a word aligned address.
   * @param[in]  u32Data The word data to be programmed.
-  * @return None
+  * @return   0   Success
+  * @return   -1  Program Failed
+  *
+  * @note     Global error code g_FMC_i32ErrCode
+  *           -1  Program failed or time-out
+  
   */
-void FMC_Write(uint32_t u32Addr, uint32_t u32Data)
+int32_t FMC_Write(uint32_t u32Addr, uint32_t u32Data)
 {
+    uint32_t  tout;
+
+    g_FMC_i32ErrCode = 0;
+
     FMC->ISPCMD = FMC_ISPCMD_PROGRAM;
     FMC->ISPADDR = u32Addr;
     FMC->ISPDAT = u32Data;
     FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;
-    while (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk) { }
+    
+    tout = FMC_TIMEOUT_WRITE;
+    
+    while ((--tout > 0) && (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk)) {}
+    
+    if (tout == 0)
+    {
+        g_FMC_i32ErrCode = -1;
+        return -1;
+    }
+
+    if (FMC->ISPSTS & FMC_ISPSTS_ISPFF_Msk)
+    {
+        FMC->ISPSTS |= FMC_ISPSTS_ISPFF_Msk;
+        g_FMC_i32ErrCode = -1;
+        return -1;
+    }
+    /* Invalidation Cache */
+    FMC->FTCTL |= FMC_FTCTL_CACHEINV_Msk;
+    
+    tout = FMC_TIMEOUT_WRITE;
+    
+    while ((--tout > 0) && (FMC->FTCTL & FMC_FTCTL_CACHEINV_Msk)) {}
+    
+    if (tout == 0)
+    {
+        g_FMC_i32ErrCode = -1;
+        return -1;
+    }
+    return 0;
 }
 
 /**
@@ -165,7 +232,12 @@ void FMC_Write(uint32_t u32Addr, uint32_t u32Data)
   * @param[in] u32Count Available word count in u32Config.
   * @return Success or not.
   * @retval   0  Success.
-  * @retval   -1  Invalid parameter.
+  * @retval   -1  Read failed
+  * @retval   -2  Invalid parameter.
+  *
+  * @note     Global error code g_FMC_i32ErrCode
+  *           -1  Read failed
+  *           -2  Invalid parameter
   */
 int32_t FMC_ReadConfig(uint32_t u32Config[], uint32_t u32Count)
 {
@@ -173,19 +245,27 @@ int32_t FMC_ReadConfig(uint32_t u32Config[], uint32_t u32Count)
 
     u32Config[0] = FMC_Read(FMC_CONFIG_BASE);
 
+    if (g_FMC_i32ErrCode != 0)
+        return g_FMC_i32ErrCode;
+
     if (u32Count > 3UL)
     {
-        ret = -1;
+			  g_FMC_i32ErrCode = -2;
+        ret = -2;
     }
     else
     {
         if(u32Count > 1UL)
         {
             u32Config[1] = FMC_Read(FMC_CONFIG_BASE+4UL);
+            if (g_FMC_i32ErrCode != 0)
+                return g_FMC_i32ErrCode;
         }
         if(u32Count > 2UL)
         {
             u32Config[2] = FMC_Read(FMC_CONFIG_BASE+8UL);
+            if (g_FMC_i32ErrCode != 0)
+                return g_FMC_i32ErrCode;
         }
     }
     return ret;
@@ -198,24 +278,63 @@ int32_t FMC_ReadConfig(uint32_t u32Config[], uint32_t u32Count)
  * @param[in] u32Count  Always be 2 in this BSP.
  * @return Success or not.
  * @retval   0  Success.
- * @retval   -1  Invalid parameter.
+ * @retval   -1  Erase/program/read/verify failed
+ *
+ * @note     Global error code g_FMC_i32ErrCode
+ *           < 0  Errors caused by erase/program/read failed or time-out
  */
 int32_t FMC_WriteConfig(uint32_t u32Config[], uint32_t u32Count)
 {
-    int32_t ret = 0;
     uint32_t i;
+	
+    g_FMC_i32ErrCode = 0;
+    
+    FMC_ENABLE_CFG_UPDATE();
+
+    if (FMC_Erase(FMC_CONFIG_BASE) != 0)
+    {
+        g_FMC_i32ErrCode = -1;
+        return -1;
+    }    
+    if ((FMC_Read(FMC_CONFIG_BASE) != 0xFFFFFFFF) || (FMC_Read(FMC_CONFIG_BASE+4) != 0xFFFFFFFF) ||
+            (FMC_Read(FMC_CONFIG_BASE+8) != 0xFFFFFF5A))
+    {
+        FMC_DISABLE_CFG_UPDATE();
+        g_FMC_i32ErrCode = -1;
+        return -1;
+    }
+    if (g_FMC_i32ErrCode != 0)
+    {
+        FMC_DISABLE_CFG_UPDATE();
+        return -1;
+    }
 
     for (i = 0u; i < u32Count; i++)
     {
-        FMC_Write(FMC_CONFIG_BASE + i * 4u, u32Config[i]);
-
-        if (FMC_Read(FMC_CONFIG_BASE + i * 4u) != u32Config[i])
+        if (FMC_Write(FMC_CONFIG_BASE+i*4UL, u32Config[i]) != 0)
         {
-            ret = -1;
+            FMC_DISABLE_CFG_UPDATE();
+            g_FMC_i32ErrCode = -1;
+            return -1;
         }
-    }
 
-    return ret;
+        if (FMC_Read(FMC_CONFIG_BASE+i*4UL) != u32Config[i])
+        {
+            FMC_DISABLE_CFG_UPDATE();
+            g_FMC_i32ErrCode = -1;
+            return -1;
+        }
+        if (g_FMC_i32ErrCode != 0)
+        {
+            FMC_DISABLE_CFG_UPDATE();
+            g_FMC_i32ErrCode = -1;
+            return -1;
+        }  
+    }
+    
+    FMC_DISABLE_CFG_UPDATE();
+
+    return 0;
 }
 
 /**
@@ -224,35 +343,50 @@ int32_t FMC_WriteConfig(uint32_t u32Config[], uint32_t u32Count)
   * @param[in] u32count  Byte count of flash to be calculated. It must be multiple of 512 bytes.
   * @return Success or not.
   * @retval   0           Success.
-  * @retval   0xFFFFFFFF  Invalid parameter.
+  * @retval   0xFFFFFFFF  Invalid parameter or command failed.
+  *
+  * @note     Global error code g_FMC_i32ErrCode
+  *           -1  Run/Read check sum time-out failed
+  *           -2  u32addr or u32count must be aligned with 512
   */
 uint32_t  FMC_GetChkSum(uint32_t u32addr, uint32_t u32count)
 {
-    uint32_t   ret;
+    uint32_t  tout;
+    
+    g_FMC_i32ErrCode = 0;
 
     if ((u32addr % 512UL) || (u32count % 512UL))
     {
-        ret = 0xFFFFFFFF;
+        g_FMC_i32ErrCode = -2;
+        return 0xFFFFFFFF;
+
     }
-    else
+    FMC->ISPCMD  = FMC_ISPCMD_RUN_CKS;
+    FMC->ISPADDR = u32addr;
+    FMC->ISPDAT  = u32count;
+    FMC->ISPTRG  = FMC_ISPTRG_ISPGO_Msk;
+
+    tout = FMC_TIMEOUT_CHKSUM;
+    while ((--tout > 0) && (FMC->ISPSTS & FMC_ISPSTS_ISPBUSY_Msk)) {}
+    if (tout == 0)
     {
-        FMC->ISPCMD  = FMC_ISPCMD_RUN_CKS;
-        FMC->ISPADDR = u32addr;
-        FMC->ISPDAT  = u32count;
-        FMC->ISPTRG  = FMC_ISPTRG_ISPGO_Msk;
-
-        while (FMC->ISPSTS & FMC_ISPSTS_ISPBUSY_Msk) { }
-
-        FMC->ISPCMD = FMC_ISPCMD_READ_CKS;
-        FMC->ISPADDR    = u32addr;
-        FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;
-
-        while (FMC->ISPSTS & FMC_ISPSTS_ISPBUSY_Msk) { }
-
-        ret = FMC->ISPDAT;
+        g_FMC_i32ErrCode = -1;
+        return 0xFFFFFFFF;
     }
 
-    return ret;
+    FMC->ISPCMD = FMC_ISPCMD_READ_CKS;
+    FMC->ISPADDR    = u32addr;
+    FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;
+
+    tout = FMC_TIMEOUT_CHKSUM;
+    while ((--tout > 0) && (FMC->ISPSTS & FMC_ISPSTS_ISPBUSY_Msk)) {}
+    if (tout == 0)
+    {
+        g_FMC_i32ErrCode = -1;
+        return 0xFFFFFFFF;
+    }
+
+    return FMC->ISPDAT;
 }
 
 /*@}*/ /* end of group FMC_EXPORTED_FUNCTIONS */
