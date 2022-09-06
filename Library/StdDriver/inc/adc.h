@@ -391,7 +391,7 @@ void ADC_EnableHWTrigger(ADC_T *adc,
 void ADC_DisableHWTrigger(ADC_T *adc);
 void ADC_EnableInt(ADC_T *adc, uint32_t u32Mask);
 void ADC_DisableInt(ADC_T *adc, uint32_t u32Mask);
-
+void ADC_SetInternalSampleTime(ADC_T *adc, uint32_t u32InternalSampleTime);
 
 
 /*@}*/ /* end of group ADC_EXPORTED_FUNCTIONS */

@@ -40,23 +40,29 @@ void SYS_Init(void)
     /* Unlock protected registers */
     SYS_UnlockReg();
 
-    /* Enable HIRC clock (Internal RC 48 MHz) */
+    /* Enable HIRC */
     CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
 
-    /* Wait for HIRC clock ready */
+    /* Waiting for HIRC clock ready */
     CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
 
-    /* Select HCLK clock source as HIRC and HCLK source divider as 1 */
+    /* Switch HCLK clock source to HIRC/1 */
     CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));
 
-    /* Enable module clock */
-    CLK_EnableModuleClock(UART0_MODULE);
-    CLK_EnableModuleClock(ADC_MODULE);
+    /* Set both PCLK0 and PCLK1 as HCLK/1 */
+    CLK->PCLKDIV = (CLK_PCLKDIV_APB0DIV_DIV1 | CLK_PCLKDIV_APB1DIV_DIV1);
 
     /* Switch UART0 clock source to HIRC */
     CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UART0SEL_HIRC, CLK_CLKDIV0_UART0(1));
-    /* Switch ADC clock source to HIRC, set divider to 2, ADC clock is 48/2 MHz */
-    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL2_ADCSEL_PCLK1, CLK_CLKDIV0_ADC(2));
+
+    /* Enable UART peripheral clock */
+    CLK_EnableModuleClock(UART0_MODULE);
+
+    /* Enable ADC module clock */
+    CLK_EnableModuleClock(ADC_MODULE);
+
+    /* ADC clock source is HIRC, set divider to 53 */
+    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL2_ADCSEL_HIRC, CLK_CLKDIV0_ADC(53));
 
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
@@ -79,14 +85,19 @@ void ADC_FunctionTest()
     int32_t  i32BuiltInData;
 
     printf("\n");
-    printf("+----------------------------------------------------------------------------+\n");
-    printf("|     ADC for calculate battery voltage( AVdd ) by using band-gap test       |\n");
-    printf("+----------------------------------------------------------------------------+\n\n");
+    printf("+----------------------------------------------------------------------+\n");
+    printf("|   ADC for calculate battery voltage ( AVdd ) by using band-gap test  |\n");
+    printf("+----------------------------------------------------------------------+\n\n");
 
     printf("+----------------------------------------------------------------------+\n");
-    printf("|   ADC clock source -> PCLK1  = 48 MHz                                |\n");
-    printf("|   ADC clock divider          = 2                                     |\n");
-    printf("|   ADC clock                  = 48 MHz / 2 = 24 MHz                   |\n");
+    printf("|   ADC clock source -> HIRC  = 48 MHz                                 |\n");
+    printf("|   ADC clock divider         = 53                                     |\n");
+    printf("|   ADC clock                 = 48 MHz / 53 = 905660 Hz                |\n");
+    printf("|   ADC sampling time         = (1 s / ADC clock) * 11 = 12.145 us     |\n");
+    printf("|                                                                      |\n");
+    printf("|   ** If the internal channel for band-gap voltage is active,         |\n");
+    printf("|   the minimum time of sample stage should be T_VBG_ADC. Please refer |\n");
+    printf("|   to section 8.2 in the relative Datasheet for detailed information. |\n");
     printf("+----------------------------------------------------------------------+\n");
 
     /* Enable ADC converter */
@@ -95,11 +106,14 @@ void ADC_FunctionTest()
     /* Set input mode as single-end, Single mode, and select channel 29 (band-gap voltage) */
     ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_SINGLE, BIT29);
 
+    /* Set ADC internal sampling time to 11 ADC clock */
+    ADC_SetInternalSampleTime(ADC, 11);
+
     /* Clear the A/D interrupt flag for safe */
     ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
 
     /* Enable the sample module interrupt.  */
-    ADC_ENABLE_INT(ADC, ADC_ADF_INT);   // Enable sample module A/D interrupt.
+    ADC_ENABLE_INT(ADC, ADC_ADF_INT);   /* Enable sample module A/D interrupt. */
     NVIC_EnableIRQ(ADC_IRQn);
 
     printf(" Press any key to start the test\n\n");

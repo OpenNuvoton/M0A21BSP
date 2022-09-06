@@ -31,7 +31,7 @@ void SYS_Init(void)
     CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));
 
     /* Set both PCLK0 and PCLK1 as HCLK/1 */
-    CLK->PCLKDIV = (CLK_PCLKDIV_APB0DIV_DIV2 | CLK_PCLKDIV_APB1DIV_DIV1);
+    CLK->PCLKDIV = (CLK_PCLKDIV_APB0DIV_DIV1 | CLK_PCLKDIV_APB1DIV_DIV1);
 
     /* Switch UART0 clock source to HIRC */
     CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UART0SEL_HIRC, CLK_CLKDIV0_UART0(1));
@@ -42,8 +42,8 @@ void SYS_Init(void)
     /* Enable ADC module clock */
     CLK_EnableModuleClock(ADC_MODULE);
 
-    /* ADC clock source is PCLK1, set divider to 2 */
-    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL2_ADCSEL_PCLK1, CLK_CLKDIV0_ADC(2));
+    /* ADC clock source is HIRC, set divider to 53 */
+    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL2_ADCSEL_HIRC, CLK_CLKDIV0_ADC(53));
 
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
@@ -70,9 +70,14 @@ void ADC_FunctionTest()
     printf("+----------------------------------------------------------------------+\n");
 
     printf("+----------------------------------------------------------------------+\n");
-    printf("|   ADC clock source -> PCLK1  = 48 MHz                                |\n");
-    printf("|   ADC clock divider          = 2                                     |\n");
-    printf("|   ADC clock                  = 48 MHz / 2 = 24 MHz                   |\n");
+    printf("|   ADC clock source -> HIRC  = 48 MHz                                 |\n");
+    printf("|   ADC clock divider         = 53                                     |\n");
+    printf("|   ADC clock                 = 48 MHz / 53 = 905660 Hz                |\n");
+    printf("|   ADC sampling time         = (1 s / ADC clock) * 11 = 12.145 us     |\n");
+    printf("|                                                                      |\n");
+    printf("|   ** If the internal channel for band-gap voltage is active,         |\n");
+    printf("|   the minimum time of sample stage should be T_VBG_ADC. Please refer |\n");
+    printf("|   to section 8.2 in the relative Datasheet for detailed information. |\n");
     printf("+----------------------------------------------------------------------+\n");
 
     /* Enable ADC converter */
@@ -80,6 +85,9 @@ void ADC_FunctionTest()
 
     /* Set input mode as single-end, Single mode, and select channel 29 (band-gap voltage) */
     ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_SINGLE, BIT29);
+
+    /* Set ADC internal sampling time to 11 ADC clock */
+    ADC_SetInternalSampleTime(ADC, 11);
 
     /* Clear the A/D interrupt flag for safe */
     ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);

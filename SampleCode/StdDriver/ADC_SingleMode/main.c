@@ -41,8 +41,8 @@ void SYS_Init(void)
     /* Enable ADC module clock */
     CLK_EnableModuleClock(ADC_MODULE);
 
-    /* ADC clock source is PCLK1, set divider to 1 */
-    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL2_ADCSEL_PCLK1, CLK_CLKDIV0_ADC(1));
+    /* ADC clock source is HIRC, set divider to 3 */
+    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL2_ADCSEL_HIRC, CLK_CLKDIV0_ADC(3));
 
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */

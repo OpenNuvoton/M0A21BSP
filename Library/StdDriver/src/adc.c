@@ -164,6 +164,20 @@ void ADC_DisableInt(ADC_T *adc, uint32_t u32Mask)
     return;
 }
 
+/**
+  * @brief Set ADC internal sample time.
+  * @param[in] adc The pointer of the specified ADC module.
+  * @param[in] u32InternalSampleTime Decides the internal sampling time, the range is from 4~11 ADC clock. Valid value are from 4 to 11.
+  * @return None
+  * @details When A/D converting at high conversion rate, the sampling time of analog input voltage may not enough if input channel loading is heavy,
+  *         user can extend A/D sampling time after trigger source is coming to get enough sampling time.
+  */
+void ADC_SetInternalSampleTime(ADC_T *adc, uint32_t u32InternalSampleTime)
+{
+    adc->ADCR = ((adc->ADCR) & ~(ADC_ADCR_SMPTSEL_Msk)) |
+                (((u32InternalSampleTime-4)<<ADC_ADCR_SMPTSEL_Pos) & ADC_ADCR_SMPTSEL_Msk);
+    return;
+}
 
 /*@}*/ /* end of group ADC_EXPORTED_FUNCTIONS */
 
