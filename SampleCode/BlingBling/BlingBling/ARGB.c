@@ -15,8 +15,8 @@
 #include "Word_Table.h"
 
 
-uint8_t pixelBuffer[PIXEL_NUM][GRB];
-uint8_t tmpArray[8][8];
+uint8_t pixelBuffer[PIXEL_NUM][GRB]={0};;
+uint8_t tmpArray[8][8]={0};
 
 extern uint8_t receiveData;
 
