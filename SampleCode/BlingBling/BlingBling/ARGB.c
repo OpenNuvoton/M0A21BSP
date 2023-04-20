@@ -31,8 +31,8 @@ extern uint8_t showArray[showArrayRow][showArrayColumn];
   */
 void ARGB_init()
 {
-    GPIO_SetMode(Dout_Port, Dout_PinMask, GPIO_MODE_OUTPUT);
     Dout_Pin = 0;
+    GPIO_SetMode(Dout_Port, Dout_PinMask, GPIO_MODE_OUTPUT);
 }
 
 /**
