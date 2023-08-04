@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "NuMicro.h"
+#include "fmc_user.h"
 
 #define V6M_AIRCR_VECTKEY_DATA            0x05FA0000UL
 #define V6M_AIRCR_SYSRESETREQ             0x00000004UL
@@ -149,7 +150,7 @@ int main(void)
     /* Init System, IP clock and multi-function I/O */
     SYS_Init();
     /* Enable FMC ISP function */
-    FMC_Open();
+    FMC->ISPCTL |=  FMC_ISPCTL_ISPEN_Msk;
     FMC_ENABLE_AP_UPDATE();
     FMC_ENABLE_CFG_UPDATE();
     /* Init CAN port */
@@ -187,7 +188,7 @@ int main(void)
             }
             else if (Address == CMD_READ_CONFIG)
             {
-                u32Tmp = FMC_Read(Data);
+                ReadData(Data, Data + 4, &u32Tmp);
                 memcpy(&rrMsg.Data[4], &u32Tmp, 4);
             }
             else if (Address == CMD_RUN_APROM)
@@ -198,11 +199,11 @@ int main(void)
             {
                 if ((Address % FMC_FLASH_PAGE_SIZE) == 0)
                 {
-                    FMC_Erase(Address);
+                    FMC_Erase_User(Address);
                 }
 
-                FMC_Write(Address, Data);         /* program ROM */
-                Data = FMC_Read(Address);
+                WriteData(Address, Address + 4, &Data);         /* program ROM */
+                ReadData(Address, Address + 4, &Data);
                 memcpy(&rrMsg.Data[4], &Data, 4); /* update data */
             }
 
