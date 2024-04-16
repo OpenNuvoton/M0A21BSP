@@ -650,7 +650,7 @@ int32_t CAN_SetRxMsgObj(CAN_T *tCAN, uint8_t u8MsgObj, uint8_t u8idType, uint32_
   * @retval TRUE Success
   * @retval FALSE No any message received
   * @retval -1 Read Message Fail
-  * @details Gets the message, if received.
+  * @details Gets the message, if received. The reply message does not contain frame type.
   */
 int32_t CAN_ReadMsgObj(CAN_T *tCAN, uint8_t u8MsgObj, uint8_t u8Release, STR_CANMSG_T* pCanMsg)
 {
