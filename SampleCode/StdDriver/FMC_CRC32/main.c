@@ -100,7 +100,7 @@ int32_t main(void)
         goto lexit;
     }
 
-    printf("\nLDROM (0x100000 ~ 0x%x) CRC32 checksum =>  ", (FMC_LDROM_BASE + FMC_MIN_LDROM_SIZE));
+    printf("\nLDROM (0x100000 ~ 0x%lx) CRC32 checksum =>  ", (FMC_LDROM_BASE + FMC_MIN_LDROM_SIZE));
 
     /* Erase the first page of LDROM */
     FMC_ENABLE_LD_UPDATE();
