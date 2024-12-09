@@ -153,8 +153,6 @@ int main()
 
     /* Software reset to boot to LDROM */
     NVIC_SystemReset();
-
-    while (1);
 }
 
 /*** (C) COPYRIGHT 2020 Nuvoton Technology Corp. ***/
