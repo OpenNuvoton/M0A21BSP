@@ -105,6 +105,9 @@ void SYS_Init(void)
     /* Set PB multi-function pins for CAN0 TXD(PB.7) and RXD(PB.5) */
     SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~(SYS_GPB_MFP1_PB5MFP_Msk | SYS_GPB_MFP1_PB7MFP_Msk)) |
                     (SYS_GPB_MFP1_PB5MFP_CAN0_RXD | SYS_GPB_MFP1_PB7MFP_CAN0_TXD);
+
+    /* Lock protected registers */
+    SYS_LockReg();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -149,8 +152,13 @@ int main(void)
 
     /* Init System, IP clock and multi-function I/O */
     SYS_Init();
-    /* Enable FMC ISP function */
+
+    /* Unlock protected registers */
+    SYS_UnlockReg();
+
+   /* Enable FMC ISP function. Before using FMC function, it should unlock system register first. */
     FMC->ISPCTL |=  FMC_ISPCTL_ISPEN_Msk;
+
     FMC_ENABLE_AP_UPDATE();
     FMC_ENABLE_CFG_UPDATE();
     /* Init CAN port */

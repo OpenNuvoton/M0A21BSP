@@ -173,6 +173,7 @@ int main()
     uint32_t    u32Data;
 
     SYS_Init();
+
     UART_Init();
 
     printf("\r\n\n\n");
@@ -181,9 +182,11 @@ int main()
     printf("|              [APROM code]              |\n");
     printf("+----------------------------------------+\n");
 
+    /* Unlock protected registers */
     SYS_UnlockReg();
 
-    FMC_Open();                        /* Enable FMC ISP function */
+    /* Enable FMC ISP function. Before using FMC function, it should unlock system register first. */
+    FMC_Open();
 
     /*
      *  Check if User Configuration CBS is boot with IAP mode.
