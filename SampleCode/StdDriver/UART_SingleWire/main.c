@@ -79,7 +79,7 @@ void SYS_Init(void)
     SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~(SYS_GPB_MFP1_PB4MFP_Msk | SYS_GPB_MFP1_PB6MFP_Msk)) |        \
                     (SYS_GPB_MFP1_PB4MFP_UART0_TXD | SYS_GPB_MFP1_PB6MFP_UART0_RXD);
 
-    /* Set PB multi-function pins for UART1 TXD and RXD */
+    /* Set PB multi-function pins for UART1 RXD */
     SYS->GPB_MFP1 = (SYS->GPB_MFP1 & ~SYS_GPB_MFP1_PB7MFP_Msk) | SYS_GPB_MFP1_PB7MFP_UART1_RXD;
 
     /* Lock protected registers */
